@@ -1,0 +1,264 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+
+<head>
+  <link rel="stylesheet" href="index.css">
+  <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+
+  <!-- Yandex.Metrika counter -->
+  <script type="text/javascript" >
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+      m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+    ym(83849410, "init", {
+      clickmap:true,
+      trackLinks:true,
+      accurateTrackBounce:true
+    });
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/83849410" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Yandex.Metrika counter -->
+
+  <script src="https://eqcn.ajz.miesnfu.com/wp-content/plugins/wp-3d-pony/live2dw/lib/L2Dwidget.min.js"></script>
+  <script>
+    L2Dwidget.init({
+      "model": {
+        //jsonpath控制显示那个小萝莉模型，下面这个就是我觉得最可爱的小萝莉模型
+        //jsonPath: "https://unpkg.com/live2d-widget-model-chitose@1.0.5/assets/chitose.model.json",
+        //jsonPath: "https://unpkg.com/live2d-widget-model-chitose@1.0.5/assets/chitose.physics.json",
+        //jsonPath: "https://unpkg.com/live2d-widget-model-hibiki@1.0.5/assets/hibiki.model.json",
+        jsonPath: "https://unpkg.com/live2d-widget-model-nico@1.0.5/assets/nico.model.json",
+        "scale": 1
+      },
+      "display": {
+        "position": "right", //看板娘的表现位置
+        "width": 150,  //小萝莉的宽度
+        "height": 300, //小萝莉的高度
+        "hOffset": -20,
+        "vOffset": -20
+      },
+      "mobile": {
+        "show": true,
+        "scale": 0.5
+      },
+      "react": {
+        "opacityDefault": 0.7,
+        "opacityOnHover": 0.2
+      }
+    });
+  </script>
+</head>
+
+<body>
+
+<div id="app">
+  {{ message }}
+</div>
+
+<div id="app-2">
+        <span v-bind:title="message" v-bind:iid="id2">
+          鼠标悬停几秒钟查看此处动态绑定的提示信息！
+        </span>
+</div>
+
+<div id="app-3">
+  <p v-if="seen">现在你看到我了</p>
+  <p v-bind:class="{actice: isActive}">现在你看到我了</p>
+  <input v-bind:disabled="{disabled: isDisable}" v-bind:style="styleObject" value="现在你看到我了"/>
+</div>
+
+<div id="app-4">
+  <ol>
+    <li v-for="todo in todos">
+      {{ todo.text }}
+    </li>
+  </ol>
+</div>
+
+<div id="app-5">
+  <p>{{ message }}</p>
+  <button v-on:click="reverseMessage">反转消息</button>
+</div>
+
+<div id="app-6">
+  <p>{{ message }}</p>
+  <input v-model="message">
+  <input v-model.lazy="message">
+</div>
+
+<div id="app-7">
+  <ol>
+    <!--
+      现在我们为每个 todo-item 提供 todo 对象
+      todo 对象是变量，即其内容可以是动态的。
+      我们也需要为每个组件提供一个“key”，稍后再
+      作详细解释。
+    -->
+    <todo-item
+            v-for="item in groceryList"
+            v-bind:todo="item"
+            v-bind:key="item.id"
+    ></todo-item>
+  </ol>
+</div>
+
+<div id="app-8">
+  <p>{{ foo + "aa" }}</p>
+  <!-- 这里的 `foo` 不会更新！ -->
+  <button v-on:click="foo = 'baz'">Change it</button>
+</div>
+
+<div id="app-9">
+  <button v-bind:disabled="isButtonDisabled">Button</button>
+</div>
+
+<div id="app-10">
+  <p>{{ message }}</p>
+  <p>{{ reversedMessage }}</p>
+  <button v-on:[eventname]="reverseMessage">反转消息</button>
+</div>
+
+<div id="demo">{{ fullName }}</div>
+<div id="demo2">{{ fullName }}-{{ firstName }}-{{ lastName }}</div>
+
+<div id="watch-example">
+  <p>
+    Ask a yes/no question:
+    <input v-model="question">
+  </p>
+  <p>{{ answer }}</p>
+</div>
+
+<ul id="v-for-object" class="demo">
+  <li v-for="value in object">
+    {{ value }}
+  </li>
+</ul>
+
+<div id="v-if">
+  <div v-if="Math.random() > 0.5">
+    Now you see me
+  </div>
+  <div v-else>
+    Now you don't
+  </div>
+</div>
+
+<div id="app-15">
+<li v-for="(n,k,i) in evenNumbers"
+    v-bind:key="i">{{ n }}</li>
+</div>
+
+
+<div id="app-16">
+  <ul v-for="set in sets">
+    <li v-for="n in even(set)">{{ n }}</li>
+  </ul>
+</div>
+
+<div id="app-17">
+  <ul>
+    <template v-for="item in items">
+      <li>{{ item.msg }}</li>
+      <li class="divider" role="presentation"></li>
+    </template>
+  </ul>
+</div>
+
+<div id="app-18">
+  <button v-on:click="warn('Form cannot be submitted yet.', $event)">
+    Submit
+  </button>
+  <button v-on:click.stop.prevent="counter += 1">
+    Submit
+  </button>
+  <input v-on:keyup.enter="counter += 1">
+  <p>The button above has been clicked {{ counter }} times.</p>
+</div>
+
+
+<div id="app-19">
+  <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+  <label for="jack">Jack</label>
+  <input type="checkbox" id="john" value="John" v-model="checkedNames">
+  <label for="john">John</label>
+  <input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+  <label for="mike">Mike</label>
+  <br>
+  <span>Checked names: {{ checkedNames }}</span>
+
+  <select v-model="selected">
+    <option disabled value="">请选择</option>
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+  </select>
+  <span>Selected: {{ selected }}</span>
+</div>
+
+
+
+<script src="index.js"></script>
+<!--
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script>
+<script>
+  L2Dwidget.init({pluginRootPath:"live2dw/",pluginJsPath:"lib/",pluginModelPath:"assets/",model:{scale:1.2,hHeadPos:.5,vHeadPos:.618,jsonPath:"/live2dw/assets/tororo.model.json"},display:{superSample:2,width:150,height:300,position:"right",hOffset:0,vOffset:-20},mobile:{show:!1,scale:.5},react:{opacityDefault:.7,opacityOnHover:.2},log:!1,tagMode:!1})
+</script>
+<div id="live2d-widget" class="live2d-widget-container" style="position: fixed; right: 0px; bottom: -20px; width: 150px; height: 300px; z-index: 99999; opacity: 1; pointer-events: none;"><canvas id="live2dcanvas" width="300" height="600" style="position: absolute; left: 0px; top: 0px; width: 150px; height: 300px;"></canvas></div>
+-->
+<script>
+  function moveCat(x, y){
+    document.getElementById("live2dcanvas").attr("style","position: fixed; opacity: 0.7; left: " + x + "px; bottom: " + y + "px; z-index: 1; pointer-events: none;")
+  }
+
+  /*var obox = document.querySelector("#live2dcanvas");
+  var clientW = document.documentElement.clientWidth;
+  var clientH = document.documentElement.clientHeight;
+  var w = obox.offsetWidth;
+  var h = obox.offsetHeight;
+
+  // 行为过程：按下之后，移动，再抬起
+  obox.addEventListener("mousedown",function(eve){
+    // 获取按下的坐标，在按下的事件对象身上
+    var e1 = eve || window.event;
+    // 为了防止移动过快，鼠标在某一瞬间离开元素，移动事件加给页面
+    document.addEventListener("mousemove",move)
+    // 因为移动事件在抬起的时候，被删除，所以提前起名
+    function move(eve){
+      var e = eve || window.event;
+      // 计算元素要移动的真正的距离：为鼠标相对于页面的坐标减去按下时相对于元素的坐标
+      var l = e.pageX - e1.offsetX;
+      var t = e.pageY - e1.offsetY;
+      // 边界限定
+      if(t < 0){
+        t = 0
+      }
+      if(l < 0){
+        l = 0
+      }
+      if(l > clientW - w){
+        l = clientW - w;
+      }
+      if(t > clientH - h){
+        t = clientH - h;
+      }
+
+      // 设置位置
+      obox.style.left = l + "px"
+      obox.style.top = t + "px"
+    }
+    // 抬起时，删除移动，删除抬起
+    document.addEventListener("mouseup",up)
+    function up(){
+      document.removeEventListener("mousemove",move)
+      document.removeEventListener("mouseup",up)
+    }
+  })*/
+</script>
+</body>
+
+</html>
