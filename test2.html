@@ -13,20 +13,22 @@
 
 <body>
 
-<div id="app">
-  {{ message }}
-</div>
+    <div id="components-demo">
+        <button-counter></button-counter>
+      </div>
 
 <div id="app-2">
-        <span v-bind:title="message" v-bind:iid="id2">
-          鼠标悬停几秒钟查看此处动态绑定的提示信息！
-        </span>
+    <blog-post title="My journey with Vue"></blog-post>
+    <blog-post title="Blogging with Vue"></blog-post>
+    <blog-post title="Why Vue is so fun"></blog-post>
 </div>
 
 <div id="app-3">
-  <p v-if="seen">现在你看到我了</p>
-  <p v-bind:class="{actice: isActive}">现在你看到我了</p>
-  <input v-bind:disabled="{disabled: isDisable}" v-bind:style="styleObject" value="现在你看到我了"/>
+  <blog-post
+    v-for="post in posts"
+    v-bind:key="post.id"
+    v-bind:title="post.title"
+    ></blog-post>
 </div>
 
 <div id="app-4">
@@ -172,8 +174,7 @@
 </div>
 
 
-
-<script src="index.js"></script>
+<script src="test2.js"></script>
 <!--
 <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script>
 <script>

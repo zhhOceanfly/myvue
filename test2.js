@@ -1,28 +1,28 @@
-var app = new Vue({
-    el: '#app',
-    data: {
-        message: 'Hello Vue!'
-    }
-});
-
-var app2 = new Vue({
-    el: '#app-2',
-    data: {
-      id2: "haha",
-      message: '页面加载于 ' + new Date().toLocaleString()
-    }
+Vue.component('button-counter', {
+    data: function () {
+      return {
+        count: 0
+      }
+    },
+    template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
   })
+
+var app = new Vue({ el: '#components-demo' });
+
+Vue.component('blog-post', {
+    props: ['title'],
+    template: '<h3>{{ title }}</h3>'
+  })
+  var app2 = new Vue({ el: '#app-2' });
 
   var app3 = new Vue({
     el: '#app-3',
     data: {
-      seen: true,
-      isActive: true,
-      isDisable: true,
-      styleObject: {
-        color: "red",
-        fontSize: 20
-      }
+      posts: [
+        { id: 1, title: 'My journey with Vue' },
+        { id: 2, title: 'Blogging with Vue' },
+        { id: 3, title: 'Why Vue is so fun' }
+      ]
     }
   })
 
