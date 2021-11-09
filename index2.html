@@ -55,6 +55,7 @@
 
 
 <body>
+  <div id="data-div"><textarea id="data-textarea" rows="28" style="width:100%;background-color:black;color:green;"></textarea></div>
 <!--
 <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script>
 <script>
@@ -67,7 +68,48 @@
     document.getElementById("live2dcanvas").attr("style","position: fixed; opacity: 0.7; left: " + x + "px; bottom: " + y + "px; z-index: 1; pointer-events: none;")
   }
 
-  
+  var ele = document.getElementById("data-textarea");
+  ele.value = "";
+  source = new EventSource("http://oceanflyboss.youban.com:20041/api/liveshow/material/info.sse");
+        source.onopen =function(e){
+            console.log("连接已经建立：",this.readyState );
+        };
+        source.onmessage =function(event){
+            console.log("服务器数据:",event.data);
+            jdata = JSON.parse(event.data);
+          
+            ele.value = ele.value + "[root]#" + jdata.data + "\n";
+            //if (event.data.length > 0) {
+            //    ele.value = ele.value + "[root]#" + event.data + "\n";
+            //    ele.scrollTop = ele.scrollHeight;
+            //}
+            // if (event.data.indexOf("end!!!") > -1) {
+            //     //console.log("sse end：", this.readyState);
+            //     var ii = event.data.indexOf("end!!!");
+            //     var status = event.data.slice(ii + 6, ii + 7);
+            //     l.ladda('stop');
+
+            //     source.close();
+            //     if (status == "1") {
+            //         isSuccess = 1;
+            //         swal({
+            //             title: "发布成功",
+            //             type: "success",
+            //             showCancelButton: false,
+            //             confirmButtonColor: "#DD6B55",
+            //             confirmButtonText: "确定",
+            //         }, function () {
+            //             window.location.reload();
+            //         });
+            //     } else {
+            //         isSuccess = -1;
+            //         swal(data.msg, "", "error");
+            //     }
+            // }
+        };
+        source.onerror =function(err){
+            console.log("连接出错：", this.readyState);
+        };
 </script>
 </body>
 
