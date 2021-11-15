@@ -31,18 +31,55 @@
     ></blog-post>
 </div>
 
+<hr>
 <div id="app-4">
-  <ol>
-    <li v-for="todo in todos">
-      {{ todo.text }}
-    </li>
-  </ol>
+  <blog-post2
+  v-for="post in posts"
+  v-bind:key="post.id"
+  v-bind:post="post"
+    ></blog-post2>
+</div>
+<div id="app-41">
+  <blog-post2 v-bind:post="{'id':'222','title':'weee','content':'gee'}" title="haha" content="www"></blog-post2>
+</div>
+
+<div id="blog-posts-events-demo">
+  <div :style="{ fontSize: postFontSize + 'em' }">
+    <blog-post2
+      v-for="post in posts"
+      v-bind:key="post.id"
+      v-bind:post="post"
+    ></blog-post2>
+  </div>
+</div>
+
+<div id="blog-posts3-events-demo">
+  <div :style="{ fontSize: postFontSize + 'em' }">
+    <blog-post3
+      v-for="post in posts"
+      v-bind:key="post.id"
+      v-bind:post="post"
+      v-on:enlarge-text="postFontSize += 0.1"
+    ></blog-post3>
+  </div>
+</div>
+<div id="blog-posts4-events-demo">
+  <div :style="{ fontSize: postFontSize + 'em' }">
+    <blog-post4
+      v-for="post in posts"
+      v-bind:key="post.id"
+      v-bind:post="post"
+      v-on:enlarge-text="postFontSize += $event"
+    ></blog-post4>
+  </div>
 </div>
 
 <div id="app-5">
-  <p>{{ message }}</p>
-  <button v-on:click="reverseMessage">反转消息</button>
+  <custom-input v-model="searchText"></custom-input>
 </div>
+
+
+
 
 <div id="app-6">
   <p>{{ message }}</p>

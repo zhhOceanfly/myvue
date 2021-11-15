@@ -26,26 +26,87 @@ Vue.component('blog-post', {
     }
   })
 
+  Vue.component('blog-post2', {
+    props: ['post'],
+    template: `
+      <div class="blog-post2">
+        <h3>{{ post.title }}</h3>
+        <div v-html="post.content"></div>
+      </div>
+    `
+  })
+
   var app4 = new Vue({
     el: '#app-4',
     data: {
-      todos: [
-        { text: '学习 JavaScript' },
-        { text: '学习 Vue' },
-        { text: '整个牛项目' }
+      posts: [
+        { id: 1, title: 'My journey with Vue',content: 'haha' },
+        { id: 2, title: 'Blogging with Vue',content:'www', },
+        { id: 3, title: 'Why Vue is so fun',content:'2as' }
       ]
+    }
+  });
+  var app41 = new Vue({ el: '#app-41' });
+
+  var app42 = new Vue({
+    el: '#blog-posts-events-demo',
+    data: {
+      posts: [{ id: 1, title: 'My journey with Vue',content: 'haha' }],
+      postFontSize: 1
+    }
+  })
+  Vue.component('blog-post3', {
+    props: ['post'],
+    template: `
+      <div class="blog-post3">
+        <h3>{{ post.title }}</h3>
+        <button v-on:click="$emit('enlarge-text')">
+          Enlarge text
+        </button>
+        <div v-html="post.content"></div>
+      </div>
+    `
+  })
+  var app43 = new Vue({
+    el: '#blog-posts3-events-demo',
+    data: {
+      posts: [{ id: 1, title: 'My journey with Vue',content: 'haha' }],
+      postFontSize: 1
+    }
+  })
+  Vue.component('blog-post4', {
+    props: ['post'],
+    template: `
+      <div class="blog-post4">
+        <h3>{{ post.title }}</h3>
+        <button v-on:click="$emit('enlarge-text', 0.1)">
+          Enlarge text
+        </button>
+        <div v-html="post.content"></div>
+      </div>
+    `
+  })
+  var app44 = new Vue({
+    el: '#blog-posts4-events-demo',
+    data: {
+      posts: [{ id: 1, title: 'My journey with Vue',content: 'haha' }],
+      postFontSize: 1
     }
   })
 
+  Vue.component('custom-input', {
+    props: ['value'],
+    template: `
+      <input id="ahww"
+        v-bind:value="value"
+        v-on:input="$emit('input', $event.target.value)"
+      >
+    `
+  })
   var app5 = new Vue({
     el: '#app-5',
     data: {
-      message: 'Hello Vue.js!'
-    },
-    methods: {
-      reverseMessage: function () {
-        this.message = this.message.split('').reverse().join('')
-      }
+      searchText: 'hahahha sfsdfwfosfsd!'
     }
   })
 
