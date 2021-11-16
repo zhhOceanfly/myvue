@@ -1,3 +1,5 @@
+Vue.config.devtools = true
+
 var app = new Vue({
     el: '#app',
     data: {
@@ -81,6 +83,9 @@ var app2 = new Vue({
   var app8 = new Vue({
     el: '#app-8',
     data: obj
+    // data: {
+    //   foo: 'bar'
+    // }
   })
 
   var app9 = new Vue({
