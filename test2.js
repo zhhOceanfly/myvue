@@ -1,13 +1,16 @@
-Vue.component('button-counter', {
+var bc = {//Vue.component({'button-counter', {
     data: function () {
       return {
         count: 0
       }
     },
     template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
-  })
+  }//)
 
-var app = new Vue({ el: '#components-demo' });
+var app = new Vue({
+   el: '#components-demo', 
+  components: {'button-counter':bc} 
+});
 
 Vue.component('blog-post', {
     props: ['title'],
@@ -94,7 +97,7 @@ Vue.component('blog-post', {
     }
   })
 
-  Vue.component('custom-input', {
+  var ci = {//Vue.component({
     props: ['value'],
     template: `
       <input id="ahww"
@@ -102,9 +105,12 @@ Vue.component('blog-post', {
         v-on:input="$emit('input', $event.target.value)"
       >
     `
-  })
+  }//)
   var app5 = new Vue({
     el: '#app-5',
+    components: {
+      'custom-input': ci,
+    },
     data: {
       searchText: 'hahahha sfsdfwfosfsd!'
     }
