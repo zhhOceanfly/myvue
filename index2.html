@@ -143,7 +143,7 @@ document.body.append(mmHS)
   var ele = document.getElementById("data-textarea");
   ele.value = "";
    //source = new EventSource("http://oceanflyboss.youban.com:20041/api/liveshow/material/info.sse");
-   source = new EventSource("https://testboss.youban.com/api/liveshow/material/info.sse");
+   source = new EventSource("http://testboss.youban.com/api/liveshow/material/info.sse");
    source.onopen =function(e){
              console.log("连接已经建立：",this.readyState );
          };
