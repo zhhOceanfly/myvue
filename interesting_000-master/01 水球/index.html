@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			body{
+				height: 100vh;
+				background: linear-gradient(#5f5ffa 10%,#03036e);
+				/* background: linear-gradient(rgb(95,95,250) 10%,rgb(3,3,110)); */
+			}
+			.main{
+				width: 200px;
+				height: 200px;
+				border: 3px solid darkturquoise;
+				border-radius: 50%;		/* 圆角比,50%为圆形 */
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%,-50%);	/* 配合上面的左和上的50%距离,在内容在浏览器页面中间 */
+				padding: 10px;
+			}
+			.wave{
+				width: 200px;
+				height: 200px;
+				background: darkturquoise;
+				border-radius: 50%;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%,-50%);
+				
+				/* 后面加,隐藏多余的位置 */
+				overflow: hidden;		
+			}
+			.wave::after{
+				content: "";
+				width: 300px;
+				height: 300px;
+				background-color: #FFFFFF;
+				opacity: 0.8;
+				/* background-color: rgb(255,255,255,0.8); */
+				position: absolute;
+				left: 50%;
+				top: 0;
+				transform: translate(-50%,-60%);
+				border-radius: 40%;
+				animation: wave 5s linear infinite;
+			}
+			.wave::before{
+				content: "waterball";
+				position: absolute;
+				left: 50%;
+				top: 0px;
+				color: darkturquoise;
+				z-index: 99;
+				transform: translate(-50%,30px);
+				text-transform: uppercase;
+			}
+			@keyframes  wave{
+				100%{
+					transform: translate(-50%,-60%) rotate(360deg);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<!-- div.main>div.wave -->
+		<!-- .main>.wave -->
+		<div class="main">
+			<div class="wave"></div>
+		</div>
+		
+		
+	</body>
+</html>
