@@ -22,8 +22,17 @@ window.client2 = WujiRTM.createInstance("00000000000000000000000000810958", {
  */
 window.localTracks = {
   videoTrack: null,
-  audioTrack: null
+  audioTrack: null,
+  audioMixingTrack: null,
+  audioEffectTrack: null
 };
+var audioMixing = {
+  state: "IDLE", // "IDLE" | "LOADING | "PLAYING" | "PAUSE"
+  duration: 0
+}
+
+const playButton = $(".play");
+let audioMixingProgressAnimation;
 
 /*
  * On initiation no users are connected.
@@ -83,6 +92,9 @@ $("#join-form").submit(async function (e) {
       console.log('get message');
       conn();
     });
+    channel2.on('MemberJoined', memberId => {
+      console.log('join in');
+      })
 
     await join();
     if(options.token) {
@@ -95,6 +107,10 @@ $("#join-form").submit(async function (e) {
     console.error(error);
   } finally {
     $("#leave").attr("disabled", false);
+    $("#audio-mixing").attr("disabled", false);
+    $("#audio-effect").attr("disabled", false);
+    $("#stop-audio-mixing").attr("disabled", false);
+    $("#local-audio-mixing").attr("disabled", false);
   }
 })
 
@@ -104,6 +120,133 @@ $("#join-form").submit(async function (e) {
 $("#leave").click(function (e) {
   leave();
 })
+$("#audio-mixing").click(function (e) {
+  startAudioMixing();
+})
+$("#audio-effect").click(async function (e) {
+  // play the audio effect
+  await playEffect(1, { source: "audio.mp3" });
+  console.log("play audio effect success");
+})
+
+$("#stop-audio-mixing").click(function (e) {
+  stopAudioMixing();
+  return false;
+})
+
+$(".progress").click(function (e) {
+  setAudioMixingPosition(e.offsetX);
+  return false;
+})
+$("#local-audio-mixing").click(function (e) {
+  // get selected file
+  const file = $("#local-file").prop("files")[0];
+  if (!file) {
+    console.warn("please choose a audio file");
+    return;
+  }
+  startAudioMixing(file);
+  return false;
+})
+playButton.click(function() {
+  if (audioMixing.state === "IDLE" || audioMixing.state === "LOADING") return;
+    toggleAudioMixing();
+    return false;
+});
+
+function setAudioMixingPosition(clickPosX) {
+  if (audioMixing.state === "IDLE" || audioMixing.state === "LOADING") return;
+  const newPosition = clickPosX / $(".progress").width();
+
+  // set the audio mixing playing position
+  localTracks.audioMixingTrack.seekAudioBuffer(newPosition * audioMixing.duration);
+}
+
+async function startAudioMixing(file) {
+  if(audioMixing.state === "PLAYING" || audioMixing.state === "LOADING") return;
+  const options = {};
+  if (file) {
+    options.source = file;
+  } else {
+    options.source = "HeroicAdventure.mp3";
+  }
+  try {
+    audioMixing.state = "LOADING";
+    // if the published track will not be used, you had better unpublish it
+    if(localTracks.audioMixingTrack) {
+      await client.unpublish(localTracks.audioMixingTrack);
+    }
+    // start audio mixing with local file or the preset file
+    localTracks.audioMixingTrack = await WujiRTC.createBufferSourceAudioTrack(options);
+    await client.publish(localTracks.audioMixingTrack);
+    localTracks.audioMixingTrack.play();
+    localTracks.audioMixingTrack.startProcessAudioBuffer({ loop: true });
+
+    audioMixing.duration = localTracks.audioMixingTrack.duration;
+    $(".audio-duration").text(toMMSS(audioMixing.duration));
+    playButton.toggleClass('active', true);
+    setAudioMixingProgress();
+    audioMixing.state = "PLAYING";
+    console.log("start audio mixing");
+  } catch (e) {
+    audioMixing.state = "IDLE";
+    console.error(e);
+  }
+}
+
+function stopAudioMixing() {
+  if (audioMixing.state === "IDLE" || audioMixing.state === "LOADING") return;
+  audioMixing.state = "IDLE";
+
+  // stop audio mixing track
+  localTracks.audioMixingTrack.stopProcessAudioBuffer();
+  localTracks.audioMixingTrack.stop();
+
+  $(".progress-bar").css("width", "0%");
+  $(".audio-current-time").text(toMMSS(0));
+  $(".audio-duration").text(toMMSS(0));
+  playButton.toggleClass('active', false);
+  cancelAnimationFrame(audioMixingProgressAnimation);
+  console.log("stop audio mixing");
+}
+
+function toggleAudioMixing() {
+  if (audioMixing.state === "PAUSE") {
+    playButton.toggleClass('active', true);
+    
+    // resume audio mixing
+    localTracks.audioMixingTrack.resumeProcessAudioBuffer();
+
+    audioMixing.state = "PLAYING";
+  } else {
+    playButton.toggleClass('active', false);
+
+    // pause audio mixing
+    localTracks.audioMixingTrack.pauseProcessAudioBuffer();
+
+    audioMixing.state = "PAUSE";
+  }
+}
+
+function setAudioMixingProgress() {
+  audioMixingProgressAnimation = requestAnimationFrame(setAudioMixingProgress);
+  const currentTime = localTracks.audioMixingTrack.getCurrentTime();
+  $(".progress-bar").css("width", `${currentTime / audioMixing.duration * 100}%`);
+  $(".audio-current-time").text(toMMSS(currentTime));
+}
+
+// use buffer source audio track to play effect.
+async function playEffect(cycle, options) {
+  // if the published track will not be used, you had better unpublish it
+  if(localTracks.audioEffectTrack) {
+    await client.unpublish(localTracks.audioEffectTrack);
+  }
+  localTracks.audioEffectTrack = await WujiRTC.createBufferSourceAudioTrack(options);
+  await client.publish(localTracks.audioEffectTrack);
+  localTracks.audioEffectTrack.play();
+  localTracks.audioEffectTrack.startProcessAudioBuffer({ cycle });
+}
+
 $('#conn').click(async function(e) {
   // await client.setClientRole('host');
   // [localTracks.audioTrack,localTracks.videoTrack] = await Promise.all([
@@ -160,7 +303,7 @@ async function join() {
   $("#local-player-name").text(`localVideo(${options.uid})`);
 
   // Publish the local video and audio tracks to the channel.
-  await client.publish(Object.values(localTracks));
+  await client.publish(Object.values(localTracks).filter(track => track !== null));
   console.log("publish success");
 }
 
@@ -168,6 +311,7 @@ async function join() {
  * Stop all local and remote tracks then leave the channel.
  */
 async function leave() {
+  stopAudioMixing();
   for (trackName in localTracks) {
     var track = localTracks[trackName];
     if(track) {
@@ -187,6 +331,10 @@ async function leave() {
   $("#local-player-name").text("");
   $("#join").attr("disabled", false);
   $("#leave").attr("disabled", true);
+  $("#audio-mixing").attr("disabled", true);
+  $("#audio-effect").attr("disabled", true);
+  $("#stop-audio-mixing").attr("disabled", true);
+  $("#local-audio-mixing").attr("disabled", true);
   console.log("client leaves channel success");
 }
 
@@ -248,4 +396,14 @@ function handleUserUnpublished(user) {
   const id = user.uid;
   delete remoteUsers[id];
   $(`#player-wrapper-${id}`).remove();
+}
+
+// calculate the MM:SS format from millisecond
+function toMMSS(second) {
+  // const second = millisecond / 1000;
+  let MM = parseInt(second / 60);
+  let SS = parseInt(second % 60);
+  MM = MM < 10 ? "0" + MM : MM;
+  SS = SS < 10 ? "0" + SS : SS;
+  return `${MM}:${SS}`;
 }

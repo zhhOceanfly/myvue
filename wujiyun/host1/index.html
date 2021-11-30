@@ -99,9 +99,32 @@
     -->
       <div class="button-group">
         <button id="join" type="submit" class="btn btn-primary btn-sm">Join</button>
-        <button id="conn" type="button" class="btn btn-primary btn-sm">连麦</button>
+        <button id="sendMsg" type="button" class="btn btn-primary btn-sm">send</button>
+        <!-- <button id="conn" type="button" class="btn btn-primary btn-sm">连麦</button> -->
         <!-- <button id="canv" type="button" class="btn btn-primary btn-sm">取消视频</button> -->
         <button id="leave" type="button" class="btn btn-primary btn-sm" disabled>Leave</button>
+      </div>
+
+      <div class="button-group">
+        <div>
+          <button id="local-audio-mixing" type="button" class="btn btn-primary btn-sm" disabled>Start Local Audio
+            Mixing</button>
+          <input id="local-file" type="file">
+        </div>
+        <button id="audio-mixing" type="button" class="btn btn-primary btn-sm" disabled>Start Preset Audio Mixing</button>
+        <button id="stop-audio-mixing" type="button" class="btn btn-primary btn-sm" disabled>Stop Audio Mixing</button>
+        <button id="audio-effect" type="button" class="btn btn-primary btn-sm" disabled>Play Audio Effect</button>
+      </div>
+      
+      <div class="audio-controls">
+        <div class="play-button"><a href="#" title="play audio mixing" class="play"></a></div>
+        <div class="audio-bar">
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+        <div class="audio-time"><span class="audio-current-time">00:00</span>/<span class="audio-duration">00:00</span>
+        </div>
       </div>
     </form>
     <!--
