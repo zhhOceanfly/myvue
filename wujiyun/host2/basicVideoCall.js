@@ -11,11 +11,25 @@
  * @param  {string} codec - The  used by the browser.
  */
 window.client = WujiRTC.createClient({ mode: "live", codec: "vp8" , role:"host"});
-window.client2 = WujiRTM.createInstance("00000000000000000000000000810958", {
+window.client2 = WujiRTM.createInstance("00000000000000000000000000283220", {
   //"00000000000000000000000000283220", {
   enableLogUpload: false,
  }); // Pass your App ID here.
- window.channel2 = client2.createChannel("test");
+ client2.login();
+client2.on('ConnectionStateChanged', function (newState, reason) {
+  // Your code.
+  console.log(newState, reason);
+  //conn();
+});
+client2.on('MessageFromPeer', function (message, peerId) {
+  // Your code.
+  console.log('get message');
+  conn();
+});
+channel2.on('MemberJoined', memberId => {
+  console.log('join in');
+  })
+ window.channel2 = client2.createChannel("oceanfly");
  
 /*
  * Clear the video and audio tracks used by `client` on initiation.
@@ -72,20 +86,6 @@ $("#join-form").submit(async function (e) {
     options.token = $("#token").val();
     options.channel = $("#channel").val();
     options.uid = Number($("#uid").val());
-    client2.login('11');
-    client2.on('ConnectionStateChanged', function (newState, reason) {
-      // Your code.
-      console.log(newState, reason);
-      //conn();
-    });
-    client2.on('MessageFromPeer', function (message, peerId) {
-      // Your code.
-      console.log('get message');
-      conn();
-    });
-    channel2.on('MemberJoined', memberId => {
-      console.log('join in');
-      })
 
     await join();
     if(options.token) {
