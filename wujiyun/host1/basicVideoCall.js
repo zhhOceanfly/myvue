@@ -11,7 +11,12 @@
  * @param  {string} codec - The  used by the browser.
  */
 window.client = WujiRTC.createClient({ mode: "live", codec: "vp8" , role:"host"});
-
+window.client2 = WujiRTM.createInstance("00000000000000000000000000810958", {
+  //"00000000000000000000000000283220", {
+  enableLogUpload: false,
+ }); // Pass your App ID here.
+ window.channel2 = client2.createChannel("test");
+ 
 /*
  * Clear the video and audio tracks used by `client` on initiation.
  */
@@ -67,6 +72,18 @@ $("#join-form").submit(async function (e) {
     options.token = $("#token").val();
     options.channel = $("#channel").val();
     options.uid = Number($("#uid").val());
+    client2.login('11');
+    client2.on('ConnectionStateChanged', function (newState, reason) {
+      // Your code.
+      console.log(newState, reason);
+      //conn();
+    });
+    client2.on('MessageFromPeer', function (message, peerId) {
+      // Your code.
+      console.log('get message');
+      conn();
+    });
+
     await join();
     if(options.token) {
       $("#success-alert-with-token").css("display", "block");
@@ -87,7 +104,36 @@ $("#join-form").submit(async function (e) {
 $("#leave").click(function (e) {
   leave();
 })
+$('#conn').click(async function(e) {
+  // await client.setClientRole('host');
+  // [localTracks.audioTrack,localTracks.videoTrack] = await Promise.all([
+  //   WujiRTC.createMicrophoneAudioTrack(),
+  //   WujiRTC.createCameraVideoTrack()
+  // ]);
+  // localTracks.videoTrack.play("local-player");
 
+  // await client.publish(Object.values(localTracks));
+  // console.log("publish success");
+})
+$('#canv').click(async function(e){
+  for (var user in remoteUsers) {
+    await client.unsubscribe(user, 'video');
+  }
+});
+$('#sendMsg').click(async function(e){
+  client2.sendMessageToPeer(
+    { text: 'host' }, // 一个 RtmMessage 实例。
+    '1234', // 对端用户的 uid。
+  ).then(sendResult => {
+    if (sendResult.hasPeerReceived) {
+      // 你的代码：远端用户收到消息事件。
+    } else {
+      // 你的代码：服务器已收到消息，对端未收到消息。
+    }
+  }).catch(error => {
+    // 你的代码：点对点消息发送失败。
+  });
+});
 /*
  * Join a channel, then create local video and audio tracks and publish them to the channel.
  */

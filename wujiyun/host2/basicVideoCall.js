@@ -16,11 +16,12 @@ window.client2 = WujiRTM.createInstance("00000000000000000000000000810958", {
   enableLogUpload: false,
  }); // Pass your App ID here.
  window.channel2 = client2.createChannel("test");
+ 
 /*
  * Clear the video and audio tracks used by `client` on initiation.
  */
 window.localTracks = {
-  videoTrack: null,
+  //videoTrack: null,
   audioTrack: null
 };
 
@@ -71,23 +72,22 @@ $("#join-form").submit(async function (e) {
     options.token = $("#token").val();
     options.channel = $("#channel").val();
     options.uid = Number($("#uid").val());
-    //await join();
-    client2.login('1234');
-    client2.on('MessageFromPeer', function (message, peerId) {
-      // Your code.
-      console.log('get message');
-      conn();
-    });
+    client2.login('11');
     client2.on('ConnectionStateChanged', function (newState, reason) {
       // Your code.
       console.log(newState, reason);
       //conn();
     });
+    client2.on('MessageFromPeer', function (message, peerId) {
+      // Your code.
+      console.log('get message');
+      conn();
+    });
     channel2.on('MemberJoined', memberId => {
       console.log('join in');
       })
 
-    await subs();
+    await join();
     if(options.token) {
       $("#success-alert-with-token").css("display", "block");
     } else {
@@ -107,94 +107,59 @@ $("#join-form").submit(async function (e) {
 $("#leave").click(function (e) {
   leave();
 })
-$("#subs").click(async function (e) {
-  e.preventDefault();
-  $("#subs").attr("disabled", true);
-  try {
-    options.appid = $("#appid").val();
-    options.token = $("#token").val();
-    options.channel = $("#channel").val();
-    options.uid = Number($("#uid").val());
-    await subs();
-    if(options.token) {
-      $("#success-alert-with-token").css("display", "block");
-    } else {
-      $("#success-alert a").attr("href", `index.html?appid=${options.appid}&channel=${options.channel}&token=${options.token}`);
-      $("#success-alert").css("display", "block");
-    }
-  } catch (error) {
-    console.error(error);
-  } finally {
-    $("#leave").attr("disabled", false);
+$('#conn').click(async function(e) {
+  // await client.setClientRole('host');
+  // [localTracks.audioTrack,localTracks.videoTrack] = await Promise.all([
+  //   WujiRTC.createMicrophoneAudioTrack(),
+  //   WujiRTC.createCameraVideoTrack()
+  // ]);
+  // localTracks.videoTrack.play("local-player");
+
+  // await client.publish(Object.values(localTracks));
+  // console.log("publish success");
+})
+$('#canv').click(async function(e){
+  for (var user in remoteUsers) {
+    await client.unsubscribe(user, 'video');
   }
-})
-async function conn(e) {
-  await client.setClientRole('host');
-  [localTracks.audioTrack,localTracks.videoTrack] = await Promise.all([
-    WujiRTC.createMicrophoneAudioTrack(),
-    WujiRTC.createCameraVideoTrack()
-  ]);
-  localTracks.videoTrack.play("local-player");
-
-  await client.publish(Object.values(localTracks));
-  console.log("conn success");
-}
-$('#conn').click(conn);
-
-$('#disconn').click(async function(e) {
-  await client.unpublish();
-  await client.setClientRole('audience');
-  remoteUsers = {};
-  $("#remote-playerlist").html("");
-})
-
-async function subs() {
-  client.on("user-published", handleUserPublished);
-  client.on("user-unpublished", handleUserUnpublished);
-
-  // Join a channel and create local tracks. Best practice is to use Promise.all and run them concurrently.
-  [ options.uid] = await Promise.all([
-    // Join the channel.
-    client.join(options.appid, options.channel, options.token || null, options.uid || null),
-    // Create tracks to the local microphone and camera.
-    //WujiRTC.createMicrophoneAudioTrack(),
-    //WujiRTC.createCameraVideoTrack()
-  ]);
-
-  // Play the local video track to the local browser and update the UI with the user ID.
-  //localTracks.videoTrack.play("local-player");
-  //localTracks.audioTrack.play();
-  $("#local-player-name").text(`localVideo(${options.uid})`);
-
-  // Publish the local video and audio tracks to the channel.
-  //await client.publish(Object.values(localTracks));
-  console.log("subs success");
-}
-async function notsubs() {
-  await client.unpublish();
-}
+});
+$('#sendMsg').click(async function(e){
+  client2.sendMessageToPeer(
+    { text: 'host' }, // 一个 RtmMessage 实例。
+    '1234', // 对端用户的 uid。
+  ).then(sendResult => {
+    if (sendResult.hasPeerReceived) {
+      // 你的代码：远端用户收到消息事件。
+    } else {
+      // 你的代码：服务器已收到消息，对端未收到消息。
+    }
+  }).catch(error => {
+    // 你的代码：点对点消息发送失败。
+  });
+});
 /*
  * Join a channel, then create local video and audio tracks and publish them to the channel.
  */
 async function join() {
 
   // Add an event listener to play remote tracks when remote user publishes.
-  //client.on("user-joined", handleUserJoined);
+  client.on("user-joined", handleUserJoined);
+  client.on("user-left", handleUserUnJoined);
   client.on("user-published", handleUserPublished);
   client.on("user-unpublished", handleUserUnpublished);
 
   // Join a channel and create local tracks. Best practice is to use Promise.all and run them concurrently.
-  [ options.uid, localTracks.audioTrack, localTracks.videoTrack ] = await Promise.all([
+  [ options.uid, localTracks.audioTrack ] = await Promise.all([
     // Join the channel.
     client.join(options.appid, options.channel, options.token || null, options.uid || null),
     // Create tracks to the local microphone and camera.
     WujiRTC.createMicrophoneAudioTrack(),
-    WujiRTC.createCameraVideoTrack()
+    //WujiRTC.createCameraVideoTrack()
   ]);
 
   // Play the local video track to the local browser and update the UI with the user ID.
-  localTracks.videoTrack.play("local-player");
-  //localTracks.audioTrack.play();
+  //localTracks.videoTrack.play("local-player");
+  localTracks.audioTrack.play();
   $("#local-player-name").text(`localVideo(${options.uid})`);
 
   // Publish the local video and audio tracks to the channel.
@@ -259,6 +224,10 @@ function handleUserJoined(user) {
   console.log('join xxx');
   const id = user.uid;
   joinUsers[id] = user;
+}
+function handleUserUnJoined(user) {
+  const id = user.uid;
+  delete joinUsers[id];
 }
 /*
  * Add a user who has subscribed to the live channel to the local interface.
