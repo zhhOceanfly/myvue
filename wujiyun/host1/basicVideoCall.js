@@ -26,7 +26,7 @@ window.localTracks = {
   audioMixingTrack: null,
   audioEffectTrack: null
 };
-var audioMixing = {
+window.audioMixing = {
   state: "IDLE", // "IDLE" | "LOADING | "PLAYING" | "PAUSE"
   duration: 0
 }

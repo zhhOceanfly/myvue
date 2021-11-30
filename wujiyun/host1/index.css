@@ -41,6 +41,11 @@ input {
 #success-alert, #success-alert-with-token {
   display: none;
 }
+.input-group {
+  display: inline-flex;
+  width: auto;
+  vertical-align: middle;
+}
 
 .button-group {
   margin-bottom: 10px;
