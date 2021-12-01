@@ -12,14 +12,20 @@
  */
 //var client = WujiRTC.createClient({ mode: "live", codec: "vp8" , role:"audience"});
 
-window.client2 = WujiRTM.createInstance("00000000000000000000000000810958", {
+window.client2 = WujiRTM.createInstance("00000000000000000000000000283220", {
   //"00000000000000000000000000283220", {
-  enableLogUpload: false,
+    //"00000000000000000000000000810958", {
+  enableLogUpload: true,
+  logFilter: WujiRTM.LOG_FILTER_INFO ,
  }); // Pass your App ID here.
- window.channel2 = client2.createChannel("test");
+ //window.channel2 = client2.createChannel("test");
+//  try {
+//   window.channel2 = await client2.createChannel('fly');
+// }catch (error) {
+//   console.error(error);
+// }
  
- 
- 
+ window.uuid = 'abc2';
 /*
  * Clear the video and audio tracks used by `client` on initiation.
  */
@@ -62,6 +68,96 @@ $(() => {
   }
 })
 
+$('#queryStatus').click(async function(e) {
+  await client2.queryPeersOnlineStatus([uuid]
+  ).then(queryResult => {
+  console.log('result:' + queryResult[uuid]);
+  });
+});
+$('#queryList').click(async function(e){
+  try {
+    var res = await client2.queryPeersBySubscriptionOption('ONLINE_STATUS');
+    console.log(res.length);
+  }catch (error) {
+    console.error(error);
+  }
+});
+$('#setAttr').click(async function(e) {
+  try {
+    var res = await client2.setLocalUserAttributes({
+      'abc':123,
+    });
+  }catch (error) {
+    console.error(error);
+  }
+});
+$('#getAttr').click(async function(e) {
+  try {
+    var res = await client2.getUserAttributes(uuid);
+    for(var key in res) {
+      console.log('key:' + key + '-value:' + res[key]);
+    }
+    // res.forEach(function(value, key){
+    //   console.log(value, key);
+    // });
+  }catch (error) {
+    console.error(error);
+  }
+});
+$('#createchannel').click(async function(e){
+  try {
+    window.channel = await client2.createChannel('fly');
+    await channel.join();
+  }catch (error) {
+    console.error(error);
+  }
+});
+$('#sendMsg').click(async function(e){
+  await client2.sendMessageToPeer(
+    { text: 'hello world' }, // 一个 RtmMessage 实例。
+    uuid, // 对端用户的 uid。
+  ).then(sendResult => {
+    if (sendResult.hasPeerReceived) {
+      // 你的代码：远端用户收到消息事件。
+      console.log('has received');
+    } else {
+      // 你的代码：服务器已收到消息，对端未收到消息。
+      console.log('not received');
+    }
+  }).catch(error => {
+    // 你的代码：点对点消息发送失败。
+    console.error(error);
+  });
+});
+$('#create').click(async function(e){
+  try {
+    await client2.login({
+      //token: 'null',
+      uid:'abc1',
+     });
+  } catch (error) {
+    console.error(error);
+  } finally {
+    console.log('finally');
+  }
+  client2.on('PeersOnlineStatusChanged', function(status){
+    console.log('conn success:' + status);
+  })
+  client2.on('ConnectionStateChanged', function (newState, reason) {
+    // Your code.
+    console.log('status changed:' + newState + '-' + reason);
+    //conn();
+  });
+  client2.on('MessageFromPeer', function (message, peerId) {
+    // Your code.
+    console.log('get message');
+    //conn();
+  });
+  // channel2.on('MemberJoined', memberId => {
+  //   console.log('join in');
+  //   })
+
+});
 /*
  * When a user clicks Join or Leave in the HTML form, this procedure gathers the information
  * entered in the form and calls join asynchronously. The UI is updated to match the options entered
