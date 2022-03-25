@@ -1,6 +1,6 @@
 var appConfig = {
-    appID: 1702812850, // 填写申请的 AppID
-    serverSecret: 'a1a5c50a025093316491e33683906ff5', // 填写申请的 ServerSecret
+    appID: 3394703449,//1702812850,//3394703449 // 填写申请的 AppID
+    serverSecret: '3f63465f8e0ca5c2fe2c13d1cb069c31',//'a1a5c50a025093316491e33683906ff5',//3f63465f8e0ca5c2fe2c13d1cb069c31 // 填写申请的 ServerSecret
 };
 
 /**
